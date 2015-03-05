@@ -135,7 +135,12 @@ public class Combat extends BasicGameState{
 				
 				if(test.lingerConstant){
 					if(test.constantTimer > 140){
-						test.energy += 7;
+						if(test.energy < test.maxEnergy){
+							test.energy += 7;
+						}
+						if(test.energy >= test.maxEnergy){
+							test.energy = test.maxEnergy;
+						}
 			        	test.constantTimer = 0;
 		        	}
 				}
@@ -152,9 +157,17 @@ public class Combat extends BasicGameState{
 
 			@Override
 			public void actionEffect(Actor p, Enemy e, int delta) {
-				if(!test.actionB){
-		        	fired = true;
-					test.timer3 = 0;
+				
+		         if(test.energy >= 0){
+		        	 if(test.timer3 > 200){
+		        		 if(spellDamage < 30){
+		        			 spellDamage += 2;
+		        		 }
+		        		 if(spellDamage >= 30){
+		        			 spellDamage = 50;
+		        		 }
+		        		 test.timer3 = 0;
+		        	 }
 		         }
 		         
 				test.spellA = true;
@@ -164,27 +177,16 @@ public class Combat extends BasicGameState{
 
 			@Override
 			public void lingeringEffect(Actor p, Enemy e, int delta) {
-				if(fired){
-			         if(test.energy >= 0){
-			        	 if(test.timer3 < 70){
-			        		 spellDamage += 1;
-			        	 }
-//			        	 if(test.timer3 > 70){
-//			        		 test.energy -= 90;
-//			        	 }
-			         }
-				}
 			
-			if(!cast){
-				enemy.causeDamage(spellDamage);
-				spellDamage = 10;
-				test.energy -= 10;
-	        	test.timer3 = 0;
-				test.spellA = false;
-				test.lSpellA = false;
-				fired = false;
-				test.timer3 = 0;
-			}
+				if(!cast){
+					enemy.causeDamage(spellDamage);
+					spellDamage = 10;
+					test.energy -= 10;
+		        	test.timer3 = 0;
+					test.spellA = false;
+					test.lSpellA = false;
+					fired = false;
+				}
 			}
 		});
 		
@@ -302,7 +304,10 @@ public class Combat extends BasicGameState{
 		g.drawString("HP: " + test.getHP(), 285, 550);
 		g.drawString("Energy: " + test.energy + "/" + test.maxEnergy, 250, 570);
 		g.drawString("Timer: " + test.timer, 30, 30);
-		g.drawString("Constant Timer: " + test.constantTimer, 30, 60);
+		g.drawString("Timer 2: " + test.timer2, 30, 45);
+		g.drawString("Timer 3: " + test.timer3, 30, 60);
+		g.drawString("Spell Damage: " + spellDamage, 30, 75);
+		g.drawString("Constant Timer: " + test.constantTimer, 30, 90);
 		
 		g.drawString("HP: " + enemy.getHP(), enemyPlaceholder.getCenterX() - 30, 50);
 		g.drawString("Energy: " + enemy.energy + "/" + enemy.maxEnergy, enemyPlaceholder.getCenterX() - 30, 65);
@@ -388,12 +393,15 @@ public class Combat extends BasicGameState{
 	    	  test.constantLingeringActionsCheck(test, enemy, delta);
 	      
 			//Updates the timer for lingering effects
-			if(test.lingerA || test.lingerB){
+			if(test.lingerA || test.lingerB || test.spellA){
 				if(test.lingerA){
 					test.timer += delta;
 				}
 				if(test.lingerB){
 					test.timer2 += delta;
+				}
+				if(test.spellA){
+					test.timer3 += delta;
 				}
 				test.lingeringActionsCheck(test, enemy, delta);
 			}
