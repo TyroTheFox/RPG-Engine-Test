@@ -194,13 +194,13 @@ public class Actor {
 		 * @param delta
 		 */
 		public void doAAction(Actor p, Enemy e, int delta){
-			if(!actionB){
+			if(!actionB && !spellA){
 		        aAction.actionEffect(p, e, delta);
 			}
 		}
 		
 		public void doSpell(Actor p, Enemy e, int delta){
-			if(!actionB){
+			if(!actionB && !actionA){
 		        spell.actionEffect(p, e, delta);
 			}
 		}
