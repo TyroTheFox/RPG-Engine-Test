@@ -164,7 +164,7 @@ public class Combat extends BasicGameState{
 		        			 spellDamage += 2;
 		        		 }
 		        		 if(spellDamage >= 30){
-		        			 spellDamage = 50;
+		        			 spellDamage = 60;
 		        		 }
 		        		 test.timer3 = 0;
 		        	 }
@@ -204,7 +204,8 @@ public class Combat extends BasicGameState{
 				if(!fired){
 		         if(test.energy >= 0){
 		        	 test.energy -= 60;
-		        	 enemy.causeDamage(test.strength + test.getWeapon().attack);
+		        	 enemy.causeDamage(test.getWeapon().attack);
+		        	 enemy.constantTimer = 0;
 					test.getWeapon().clip -= 1;
 		         }
 		         fired = true;
