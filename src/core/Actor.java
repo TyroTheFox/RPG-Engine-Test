@@ -63,6 +63,8 @@ public class Actor {
 	  float x;
 	  float y;
 	  
+	  boolean energyCutoff = false;
+	  
 	  Weapon weapon;
 	  
 	    //Character Flags
@@ -211,9 +213,9 @@ public class Actor {
 		 * @param delta
 		 */
 		public void doBAction(Actor p, Enemy e, int delta){
-//			if(!actionA){
+			if(!spellA){
 		        bAction.actionEffect(p, e, delta);
-//			}
+			}
 		}
 		
 		/**
@@ -306,9 +308,7 @@ public class Actor {
 	    	if(defend){
 	    		d = 0;
 	    	}
-	    	else{
-	    		d = 1;
-	    	}
+
 	    	HP -= (attack - defence) * d;
 	    }
 	    

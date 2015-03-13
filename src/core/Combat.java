@@ -79,7 +79,7 @@ public class Combat extends BasicGameState{
 //					if(eFired && aCounter < 1){						
 			         if(enemy.energy >= 0){
 			        	 enemy.energy -= 10;
-			        	 test.causeDamage(enemy.strength, defend);
+			        	 test.causeDamage(enemy.strength, test.actionB);
 						aCounter += 1;
 			         }
 //					eFired = false;
@@ -202,8 +202,7 @@ public class Combat extends BasicGameState{
 //				test.actionA = true;
 //				test.lingerA = true;
 				if(!fired){
-		         if(test.energy >= 0){
-		        	 test.energy -= 60;
+		         if(test.weapon.clip > 0){
 		        	 enemy.causeDamage(test.getWeapon().attack);
 		        	 enemy.constantTimer = 0;
 					test.getWeapon().clip -= 1;
@@ -248,32 +247,39 @@ public class Combat extends BasicGameState{
 			@Override
 			public void actionEffect(Actor p, Enemy e, int delta) {
 		         
-				if(!test.actionB){
+				if(!fired){
 		        	fired = true;
 					test.timer2 = 0;
+					test.actionB = true;
+					test.lingerB = true;
 		         }
 		         
-				test.actionB = true;
-				test.lingerB = true;
 			}
 
 			@Override
 			public void lingeringEffect(Actor p, Enemy e, int delta) {
 				
-					if(fired){
-				         if(test.energy >= 0){
+					if(fired && !test.energyCutoff){
+				         if(test.energy > 0){
 				        	 if(test.timer2 > 70){
 				        		 test.energy -= 10;
 					        	 test.timer2 = 0;
 				        	 }
 				         }
 					}
+					
+			         if(test.energy <= 0){
+			        	 test.energy = 0;
+			        	 test.actionB = false;
+			        	 test.energyCutoff = true;
+			         }
 				
 				if(!defend){
-					test.actionB = false;
+					test.actionB = false; 
 					test.lingerB = false;
 					fired = false;
 					test.timer2 = 0;
+					test.energyCutoff = false;
 				}
 			}
   		  
@@ -309,6 +315,7 @@ public class Combat extends BasicGameState{
 		g.drawString("Timer 3: " + test.timer3, 30, 60);
 		g.drawString("Spell Damage: " + spellDamage, 30, 75);
 		g.drawString("Constant Timer: " + test.constantTimer, 30, 90);
+		g.drawString("Clip: " + test.weapon.clip + "/" + test.weapon.clipSize, 30, 105);
 		
 		g.drawString("HP: " + enemy.getHP(), enemyPlaceholder.getCenterX() - 30, 50);
 		g.drawString("Energy: " + enemy.energy + "/" + enemy.maxEnergy, enemyPlaceholder.getCenterX() - 30, 65);
