@@ -18,6 +18,8 @@ public class Combat extends BasicGameState{
 	boolean attack, defend, cast;
 	boolean eAttack, eDefend, think = false, eWarning = false;
 	
+	EnergyTank eT;
+	
 	Weapon testShotgun;
 	
 	Weapon weapon;
@@ -27,7 +29,7 @@ public class Combat extends BasicGameState{
 	Actor test;
 	Enemy enemy;
 	
-	boolean fired, eFired;
+	boolean fired, fired2, eFired;
 	
 	public Combat(int state){}
 
@@ -54,6 +56,8 @@ public class Combat extends BasicGameState{
 		
 		test = new Actor();
 		enemy = new Enemy();
+		
+		eT = new EnergyTank(30, 125);
 		
 		enemy.addBrain(new Brain(){
 
@@ -133,19 +137,36 @@ public class Combat extends BasicGameState{
 			@Override
 			public void lingeringEffect(Actor p, Enemy e, int delta) {
 				
+//				if(test.lingerConstant){
+//					if(test.constantTimer > 140){
+//						if(test.energy < test.maxEnergy){
+//							test.energy += 7;
+//						}
+//						if(test.energy >= test.maxEnergy){
+//							test.energy = test.maxEnergy;
+//						}
+//			        	test.constantTimer = 0;
+//		        	}
+//				}
+//				
+//				if(test.energy > test.maxEnergy){
+//					test.lingerConstant = false;
+//					test.constantTimer = 0;
+//				}
+				
 				if(test.lingerConstant){
 					if(test.constantTimer > 140){
-						if(test.energy < test.maxEnergy){
-							test.energy += 7;
+						if(eT.energyLevel < eT.maxEnergyLevel){
+							eT.energyLevel += 7;
 						}
-						if(test.energy >= test.maxEnergy){
-							test.energy = test.maxEnergy;
+						if(eT.energyLevel >= eT.maxEnergyLevel){
+							eT.energyLevel = eT.maxEnergyLevel;
 						}
 			        	test.constantTimer = 0;
 		        	}
 				}
 				
-				if(test.energy > test.maxEnergy){
+				if(eT.energyLevel > eT.maxEnergyLevel){
 					test.lingerConstant = false;
 					test.constantTimer = 0;
 				}
@@ -158,7 +179,19 @@ public class Combat extends BasicGameState{
 			@Override
 			public void actionEffect(Actor p, Enemy e, int delta) {
 				
-		         if(test.energy >= 0){
+//		         if(test.energy >= 0){
+//		        	 if(test.timer3 > 200){
+//		        		 if(spellDamage < 30){
+//		        			 spellDamage += 2;
+//		        		 }
+//		        		 if(spellDamage >= 30){
+//		        			 spellDamage = 60;
+//		        		 }
+//		        		 test.timer3 = 0;
+//		        	 }
+//		         }
+		         
+		         if(eT.energyLevel >= 0){
 		        	 if(test.timer3 > 200){
 		        		 if(spellDamage < 30){
 		        			 spellDamage += 2;
@@ -178,10 +211,23 @@ public class Combat extends BasicGameState{
 			@Override
 			public void lingeringEffect(Actor p, Enemy e, int delta) {
 			
+//				if(!cast){
+//					enemy.causeDamage(spellDamage);
+//					spellDamage = 10;
+//					test.energy -= 10;
+//		        	test.timer3 = 0;
+//					test.spellA = false;
+//					test.lSpellA = false;
+//					fired = false;
+//				}
+				
 				if(!cast){
 					enemy.causeDamage(spellDamage);
 					spellDamage = 10;
-					test.energy -= 10;
+					eT.energyLevel -= 10;
+			         if(eT.energyLevel <= 0){
+			        	 eT.energyLevel = 0;
+			         }
 		        	test.timer3 = 0;
 					test.spellA = false;
 					test.lSpellA = false;
@@ -247,8 +293,8 @@ public class Combat extends BasicGameState{
 			@Override
 			public void actionEffect(Actor p, Enemy e, int delta) {
 		         
-				if(!fired){
-		        	fired = true;
+				if(!fired2){
+		        	fired2 = true;
 					test.timer2 = 0;
 					test.actionB = true;
 					test.lingerB = true;
@@ -259,17 +305,17 @@ public class Combat extends BasicGameState{
 			@Override
 			public void lingeringEffect(Actor p, Enemy e, int delta) {
 				
-					if(fired && !test.energyCutoff){
-				         if(test.energy > 0){
+					if(fired2 && !test.energyCutoff){
+				         if(eT.energyLevel > 0){
 				        	 if(test.timer2 > 70){
-				        		 test.energy -= 10;
+				        		 eT.energyLevel -= 10;
 					        	 test.timer2 = 0;
 				        	 }
 				         }
 					}
 					
-			         if(test.energy <= 0){
-			        	 test.energy = 0;
+			         if(eT.energyLevel <= 0){
+			        	 eT.energyLevel = 0;
 			        	 test.actionB = false;
 			        	 test.energyCutoff = true;
 			         }
@@ -277,7 +323,7 @@ public class Combat extends BasicGameState{
 				if(!defend){
 					test.actionB = false; 
 					test.lingerB = false;
-					fired = false;
+					fired2 = false;
 					test.timer2 = 0;
 					test.energyCutoff = false;
 				}
@@ -316,6 +362,8 @@ public class Combat extends BasicGameState{
 		g.drawString("Spell Damage: " + spellDamage, 30, 75);
 		g.drawString("Constant Timer: " + test.constantTimer, 30, 90);
 		g.drawString("Clip: " + test.weapon.clip + "/" + test.weapon.clipSize, 30, 105);
+		eT.render(g);
+		
 		
 		g.drawString("HP: " + enemy.getHP(), enemyPlaceholder.getCenterX() - 30, 50);
 		g.drawString("Energy: " + enemy.energy + "/" + enemy.maxEnergy, enemyPlaceholder.getCenterX() - 30, 65);
@@ -399,6 +447,7 @@ public class Combat extends BasicGameState{
 	    	  test.constantTimer += delta;
 	    	  enemy.constantTimer += delta;
 	    	  test.constantLingeringActionsCheck(test, enemy, delta);
+	    	  eT.update();
 	      
 			//Updates the timer for lingering effects
 			if(test.lingerA || test.lingerB || test.spellA){
