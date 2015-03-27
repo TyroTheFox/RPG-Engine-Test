@@ -49,7 +49,7 @@ public class Actor {
 	  int strength = 50;
 	  int special = 80;
 	  int maxEnergy = 300;
-	  int maxTank = 2;
+	  int maxTank = 6;
 	  public ArrayList<EnergyTank> energyReserves;
 	  public EnergyTank temp;
 	  int currentTank;
@@ -67,6 +67,7 @@ public class Actor {
 	  float y;
 	  
 	  boolean energyCutoff = false;
+	  boolean energyCutoff2 = false;
 	  
 	  Weapon weapon;
 	  
@@ -148,11 +149,9 @@ public class Actor {
 		  
 		  energyReserves = new ArrayList<EnergyTank>();
 	  
-//	  for(int e = 0; e < maxTank; e++){
-		  energyReserves.add(new EnergyTank(30, 125));
-		  energyReserves.add(new EnergyTank(30, 125 + 60));
-//		  System.out.println(energyReserves[e].full + "/" + energyReserves[e].energyLevel);
-//	  }
+	  for(int e = 0; e < maxTank; e++){
+		  energyReserves.add(new EnergyTank(30, 125 + (50 * e)));
+	  }
 	  
 	  System.out.println("Array Size on Creation: " + energyReserves.size());
 	  System.out.println("Array Empty?: " + energyReserves.isEmpty());
@@ -351,11 +350,13 @@ public class Actor {
 	    		costAccepted = true;
 	    	}
 	    	
-	    	if(energyReserves.get(currentTank).energyLevel - cost <= 0){	    		
+	    	if(energyReserves.get(currentTank).energyLevel - cost <= 0){
 	    		if(currentTank != 0){
+	    			int overflow = cost - energyReserves.get(currentTank).energyLevel;
+	    			energyReserves.get(currentTank).energyLevel = 0;
 	    			currentTank -= 1;
 	    			
-	    			energyReserves.get(currentTank).energyLevel -= cost;
+	    			energyReserves.get(currentTank).energyLevel -= overflow;
 	    			costAccepted = true;
 	    		}
 	    	}
@@ -364,16 +365,17 @@ public class Actor {
 	    }
 	    
 	    public void addEnergy(int amount){
-	    	if(!energyReserves.get(currentTank).full){
+	    	if(energyReserves.get(currentTank).energyLevel + amount < energyReserves.get(currentTank).maxEnergyLevel){
 	    		energyReserves.get(currentTank).energyLevel += amount;
 	    	}
 	    	
-	    	if(energyReserves.get(currentTank).full){
+	    	if(energyReserves.get(currentTank).energyLevel + amount >= energyReserves.get(currentTank).maxEnergyLevel){
+	    		int overflow = (energyReserves.get(currentTank).energyLevel + amount) - energyReserves.get(currentTank).maxEnergyLevel;
 	    		energyReserves.get(currentTank).energyLevel = energyReserves.get(currentTank).maxEnergyLevel;
 	    		
 	    		if(currentTank != maxTank - 1){
 	    			currentTank += 1;
-	    			energyReserves.get(currentTank).energyLevel += amount;
+	    			energyReserves.get(currentTank).energyLevel += overflow;
 	    		}
 	    	}
 	    }
@@ -552,8 +554,8 @@ public class Actor {
 	  }
 	  
 	  public void renderEnergyTanks(Graphics g){
-		  for(int i = 1; i < maxTank; i++){
-			  energyReserves.get(i).render(g);
+		  for(EnergyTank tank : energyReserves) {
+		      tank.render(g);;
 		  }
 	  }
 	  

@@ -131,7 +131,9 @@ public class Combat extends BasicGameState{
 
 			@Override
 			public void actionEffect(Actor p, Enemy e, int delta) {
-				test.lingerConstant = true;	
+				if(!test.lingerB || !test.spellA){
+					test.lingerConstant = true;	
+				}
 			}
 
 			@Override
@@ -171,7 +173,8 @@ public class Combat extends BasicGameState{
 //					test.constantTimer = 0;
 //				}
 				
-				if(test.lingerConstant){
+				
+				if(test.lingerConstant && (!test.energyCutoff || !test.energyCutoff2)){
 					if(test.constantTimer > 140){
 						test.addEnergy(7);
 
@@ -216,7 +219,7 @@ public class Combat extends BasicGameState{
 //		        	 }
 //		         }
 		         
-		         if(!test.energyTankCheck()){
+		         if(!test.energyTankCheck() && !test.energyCutoff){
 		        	 if(test.timer3 > 200){
 		        		 if(spellDamage < 30){
 		        			 spellDamage += 2;
@@ -245,14 +248,21 @@ public class Combat extends BasicGameState{
 //					fired = false;
 //				}
 				
-				if(!cast && !test.energyTankCheck()){
-					if(test.spendEnergy(10)){
+				if(test.energyReserves.get(test.currentTank).energyLevel >= 10){
+					test.energyCutoff = false;
+				}
+				
+				if(!cast && !test.energyTankCheck() && !test.energyCutoff){
+					if(test.spendEnergy(50)){
 						enemy.causeDamage(spellDamage);
 						spellDamage = 10;
 			        	test.timer3 = 0;
 						test.spellA = false;
 						test.lSpellA = false;
 						fired = false;
+					}
+					else{
+						 test.energyCutoff = true;
 					}
 				}
 			}
@@ -318,7 +328,6 @@ public class Combat extends BasicGameState{
 				if(!fired2){
 		        	fired2 = true;
 					test.timer2 = 0;
-					test.actionB = true;
 					test.lingerB = true;
 		         }
 		         
@@ -342,11 +351,15 @@ public class Combat extends BasicGameState{
 //			        	 test.energyCutoff = true;
 //			         }
 			         
-						if(fired2 && !test.energyCutoff){
+						if(fired2 && !test.energyCutoff2){
 					         if(!test.energyTankCheck()){
 					        	 if(test.timer2 > 70){
 					        		 if(test.spendEnergy(10)){
 					        			 test.timer2 = 0;
+					        			 test.actionB = true;
+					        		 }
+					        		 else{
+					        			 test.energyCutoff2 = true;
 					        		 }
 					        	 }
 					         }
@@ -354,7 +367,7 @@ public class Combat extends BasicGameState{
 						
 				         if(test.energyTankCheck()){
 				        	 test.actionB = false;
-				        	 test.energyCutoff = true;
+				        	 test.energyCutoff2 = true;
 				         }
 				
 				if(!defend){
@@ -362,7 +375,7 @@ public class Combat extends BasicGameState{
 					test.lingerB = false;
 					fired2 = false;
 					test.timer2 = 0;
-					test.energyCutoff = false;
+					test.energyCutoff2 = false;
 				}
 			}
   		  
