@@ -57,7 +57,7 @@ public class Combat extends BasicGameState{
 		test = new Actor();
 		enemy = new Enemy();
 		
-		eT = new EnergyTank(30, 125);
+//		eT = new EnergyTank(30, 125);
 		
 		enemy.addBrain(new Brain(){
 
@@ -154,19 +154,32 @@ public class Combat extends BasicGameState{
 //					test.constantTimer = 0;
 //				}
 				
+//				if(test.lingerConstant){
+//					if(test.constantTimer > 140){
+//						if(eT.energyLevel < eT.maxEnergyLevel){
+//							eT.energyLevel += 7;
+//						}
+//						if(eT.energyLevel >= eT.maxEnergyLevel){
+//							eT.energyLevel = eT.maxEnergyLevel;
+//						}
+//			        	test.constantTimer = 0;
+//		        	}
+//				}
+//				
+//				if(eT.energyLevel > eT.maxEnergyLevel){
+//					test.lingerConstant = false;
+//					test.constantTimer = 0;
+//				}
+				
 				if(test.lingerConstant){
 					if(test.constantTimer > 140){
-						if(eT.energyLevel < eT.maxEnergyLevel){
-							eT.energyLevel += 7;
-						}
-						if(eT.energyLevel >= eT.maxEnergyLevel){
-							eT.energyLevel = eT.maxEnergyLevel;
-						}
+						test.addEnergy(7);
+
 			        	test.constantTimer = 0;
 		        	}
 				}
 				
-				if(eT.energyLevel > eT.maxEnergyLevel){
+				if(test.fullTankCheck()){
 					test.lingerConstant = false;
 					test.constantTimer = 0;
 				}
@@ -191,7 +204,19 @@ public class Combat extends BasicGameState{
 //		        	 }
 //		         }
 		         
-		         if(eT.energyLevel >= 0){
+//		         if(eT.energyLevel >= 0){
+//		        	 if(test.timer3 > 200){
+//		        		 if(spellDamage < 30){
+//		        			 spellDamage += 2;
+//		        		 }
+//		        		 if(spellDamage >= 30){
+//		        			 spellDamage = 60;
+//		        		 }
+//		        		 test.timer3 = 0;
+//		        	 }
+//		         }
+		         
+		         if(!test.energyTankCheck()){
 		        	 if(test.timer3 > 200){
 		        		 if(spellDamage < 30){
 		        			 spellDamage += 2;
@@ -202,7 +227,6 @@ public class Combat extends BasicGameState{
 		        		 test.timer3 = 0;
 		        	 }
 		         }
-		         
 				test.spellA = true;
 				test.lSpellA = true;
 				
@@ -221,17 +245,15 @@ public class Combat extends BasicGameState{
 //					fired = false;
 //				}
 				
-				if(!cast){
-					enemy.causeDamage(spellDamage);
-					spellDamage = 10;
-					eT.energyLevel -= 10;
-			         if(eT.energyLevel <= 0){
-			        	 eT.energyLevel = 0;
-			         }
-		        	test.timer3 = 0;
-					test.spellA = false;
-					test.lSpellA = false;
-					fired = false;
+				if(!cast && !test.energyTankCheck()){
+					if(test.spendEnergy(10)){
+						enemy.causeDamage(spellDamage);
+						spellDamage = 10;
+			        	test.timer3 = 0;
+						test.spellA = false;
+						test.lSpellA = false;
+						fired = false;
+					}
 				}
 			}
 		});
@@ -305,20 +327,35 @@ public class Combat extends BasicGameState{
 			@Override
 			public void lingeringEffect(Actor p, Enemy e, int delta) {
 				
-					if(fired2 && !test.energyCutoff){
-				         if(eT.energyLevel > 0){
-				        	 if(test.timer2 > 70){
-				        		 eT.energyLevel -= 10;
-					        	 test.timer2 = 0;
-				        	 }
+//					if(fired2 && !test.energyCutoff){
+//				         if(eT.energyLevel > 0){
+//				        	 if(test.timer2 > 70){
+//				        		 eT.energyLevel -= 10;
+//					        	 test.timer2 = 0;
+//				        	 }
+//				         }
+//					}
+//					
+//			         if(eT.energyLevel <= 0){
+//			        	 eT.energyLevel = 0;
+//			        	 test.actionB = false;
+//			        	 test.energyCutoff = true;
+//			         }
+			         
+						if(fired2 && !test.energyCutoff){
+					         if(!test.energyTankCheck()){
+					        	 if(test.timer2 > 70){
+					        		 if(test.spendEnergy(10)){
+					        			 test.timer2 = 0;
+					        		 }
+					        	 }
+					         }
+						}
+						
+				         if(test.energyTankCheck()){
+				        	 test.actionB = false;
+				        	 test.energyCutoff = true;
 				         }
-					}
-					
-			         if(eT.energyLevel <= 0){
-			        	 eT.energyLevel = 0;
-			        	 test.actionB = false;
-			        	 test.energyCutoff = true;
-			         }
 				
 				if(!defend){
 					test.actionB = false; 
@@ -355,14 +392,14 @@ public class Combat extends BasicGameState{
 		}
 		
 		g.drawString("HP: " + test.getHP(), 285, 550);
-		g.drawString("Energy: " + test.energy + "/" + test.maxEnergy, 250, 570);
+		test.renderEnergyTanks(g);
+//		g.drawString("Energy: " + test.energy + "/" + test.maxEnergy, 250, 570);
 		g.drawString("Timer: " + test.timer, 30, 30);
 		g.drawString("Timer 2: " + test.timer2, 30, 45);
 		g.drawString("Timer 3: " + test.timer3, 30, 60);
 		g.drawString("Spell Damage: " + spellDamage, 30, 75);
 		g.drawString("Constant Timer: " + test.constantTimer, 30, 90);
 		g.drawString("Clip: " + test.weapon.clip + "/" + test.weapon.clipSize, 30, 105);
-		eT.render(g);
 		
 		
 		g.drawString("HP: " + enemy.getHP(), enemyPlaceholder.getCenterX() - 30, 50);
@@ -379,7 +416,8 @@ public class Combat extends BasicGameState{
 	public void update(GameContainer gc, StateBasedGame sbg, int delta)
 			throws SlickException {
 		Input input = gc.getInput();
-		
+		test.updateEnergyTanks();
+  	  
 		//Controls
 	      //Moves Left - Left Key
 	      if(input.isKeyDown(Input.KEY_Z))
@@ -447,7 +485,6 @@ public class Combat extends BasicGameState{
 	    	  test.constantTimer += delta;
 	    	  enemy.constantTimer += delta;
 	    	  test.constantLingeringActionsCheck(test, enemy, delta);
-	    	  eT.update();
 	      
 			//Updates the timer for lingering effects
 			if(test.lingerA || test.lingerB || test.spellA){

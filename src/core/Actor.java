@@ -1,6 +1,7 @@
 package core;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Graphics;
@@ -48,12 +49,14 @@ public class Actor {
 	  int strength = 50;
 	  int special = 80;
 	  int maxEnergy = 300;
+	  int maxTank = 2;
+	  public ArrayList<EnergyTank> energyReserves;
+	  public EnergyTank temp;
+	  int currentTank;
 	  int defence = 10;
 	  int energy = 100;
 	  private float movementSpeedX = 0.6F;
 	  private float movementSpeedY = 0.6F;
-	  private float dX;
-	  private float dY = 0.0F;
 	  Rectangle boundingBox, upSensor, downSensor, leftSensor, rightSensor;
 	  boolean stopLeft = false, stopRight = false, stopUp = false, stopDown = false;
 	  boolean finishedX = false;
@@ -138,6 +141,19 @@ public class Actor {
 		  downSensor = new Rectangle(x + 5, y + 32, 22, 2);
 		  leftSensor = new Rectangle(x - 2, y + 5, 2, 22);
 		  rightSensor = new Rectangle(x + 32, y + 5, 2, 22);
+		  
+		  energyReserves = new ArrayList<EnergyTank>();
+		  
+//		  for(int e = 0; e < maxTank; e++){
+			  energyReserves.add(new EnergyTank(30, 125));
+			  energyReserves.add(new EnergyTank(30, 125 + 60));
+//			  System.out.println(energyReserves[e].full + "/" + energyReserves[e].energyLevel);
+//		  }
+		  
+		  System.out.println("Array Size on Creation: " + energyReserves.size());
+		  System.out.println("Array Empty?: " + energyReserves.isEmpty());
+		  System.out.println("Array: " + energyReserves.toString());
+		  currentTank = energyReserves.size() - 1;
 	  }
 	  
 	  public Actor(){}
@@ -145,18 +161,6 @@ public class Actor {
 	  public void setPosition(float x, float y){
 		  this.x = x;
 		  this.y = y;
-	  }
-	  
-	  public void render(Graphics g, Cell[][] grid){
-		  this.grid = grid;
-		  
-		  boundingBox.setX(x);
-		  boundingBox.setY(y);
-		  
-		  float a = boundingBox.getCenterX() - 50;
-		  float b = boundingBox.getCenterY() - 90;
-		  
-		  g.drawAnimation(current, a, b);
 	  }
 	  
 	  public Rectangle getBox()
@@ -310,6 +314,66 @@ public class Actor {
 	    	}
 
 	    	HP -= (attack - defence) * d;
+	    }
+	    
+	    public boolean energyTankCheck(){
+	    	boolean empty = false;
+	    	
+	    	if(currentTank == 0){
+	    		if(energyReserves.get(currentTank).empty){
+	    			empty = true;
+	    		}
+	    	}
+	    	
+			return empty;	
+	    }
+	    
+	    public boolean fullTankCheck(){
+	    	boolean full = false;
+	    	
+	    	if(currentTank == maxTank - 1){
+	    		if(energyReserves.get(currentTank).full){
+	    			full = true;
+	    		}
+	    	}
+	    	
+			return full;	
+	    }
+	    
+	    public boolean spendEnergy(int cost){
+	    	
+	    	boolean costAccepted = false;
+	    	
+	    	if(energyReserves.get(currentTank).energyLevel - cost > 0){
+	    		energyReserves.get(currentTank).energyLevel -= cost;
+	    		costAccepted = true;
+	    	}
+	    	
+	    	if(energyReserves.get(currentTank).energyLevel - cost <= 0){	    		
+	    		if(currentTank != 0){
+	    			currentTank -= 1;
+	    			
+	    			energyReserves.get(currentTank).energyLevel -= cost;
+	    			costAccepted = true;
+	    		}
+	    	}
+	    	
+	    	return costAccepted;
+	    }
+	    
+	    public void addEnergy(int amount){
+	    	if(!energyReserves.get(currentTank).full){
+	    		energyReserves.get(currentTank).energyLevel += amount;
+	    	}
+	    	
+	    	if(energyReserves.get(currentTank).full){
+	    		energyReserves.get(currentTank).energyLevel = energyReserves.get(currentTank).maxEnergyLevel;
+	    		
+	    		if(currentTank != maxTank - 1){
+	    			currentTank += 1;
+	    			energyReserves.get(currentTank).energyLevel += amount;
+	    		}
+	    	}
 	    }
 	    
 	  public float lerp(float a, float b, float t)
@@ -483,6 +547,20 @@ public class Actor {
 		g.draw(downSensor);
 		g.draw(leftSensor);
 		g.draw(rightSensor);
+	  }
+	  
+	  public void renderEnergyTanks(Graphics g){
+		  for(int i = 1; i < maxTank; i++){
+			  energyReserves.get(i).render(g);
+		  }
+	  }
+	  
+	  public void updateEnergyTanks(){
+		  
+		  Iterator<EnergyTank> itr = energyReserves.iterator();
+	      while(itr.hasNext()) {
+			  itr.next().update();
+		  }
 	  }
 	  
 	  public int getActionList()
