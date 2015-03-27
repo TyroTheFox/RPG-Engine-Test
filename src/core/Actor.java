@@ -142,21 +142,23 @@ public class Actor {
 		  leftSensor = new Rectangle(x - 2, y + 5, 2, 22);
 		  rightSensor = new Rectangle(x + 32, y + 5, 2, 22);
 		  
-		  energyReserves = new ArrayList<EnergyTank>();
-		  
-//		  for(int e = 0; e < maxTank; e++){
-			  energyReserves.add(new EnergyTank(30, 125));
-			  energyReserves.add(new EnergyTank(30, 125 + 60));
-//			  System.out.println(energyReserves[e].full + "/" + energyReserves[e].energyLevel);
-//		  }
-		  
-		  System.out.println("Array Size on Creation: " + energyReserves.size());
-		  System.out.println("Array Empty?: " + energyReserves.isEmpty());
-		  System.out.println("Array: " + energyReserves.toString());
-		  currentTank = energyReserves.size() - 1;
 	  }
 	  
-	  public Actor(){}
+	  public Actor(){		  
+		  
+		  energyReserves = new ArrayList<EnergyTank>();
+	  
+//	  for(int e = 0; e < maxTank; e++){
+		  energyReserves.add(new EnergyTank(30, 125));
+		  energyReserves.add(new EnergyTank(30, 125 + 60));
+//		  System.out.println(energyReserves[e].full + "/" + energyReserves[e].energyLevel);
+//	  }
+	  
+	  System.out.println("Array Size on Creation: " + energyReserves.size());
+	  System.out.println("Array Empty?: " + energyReserves.isEmpty());
+	  System.out.println("Array: " + energyReserves.toString());
+	  currentTank = energyReserves.size() - 1;
+	  }
 	  
 	  public void setPosition(float x, float y){
 		  this.x = x;
@@ -557,9 +559,8 @@ public class Actor {
 	  
 	  public void updateEnergyTanks(){
 		  
-		  Iterator<EnergyTank> itr = energyReserves.iterator();
-	      while(itr.hasNext()) {
-			  itr.next().update();
+		  for(EnergyTank tank : energyReserves) {
+		      tank.update();
 		  }
 	  }
 	  
