@@ -29,26 +29,38 @@ public class Play extends BasicGameState{
 	Boolean movingLeft = false;
 	Boolean movingRight = false;
 	
+	public static Logic logic;
+	
 	public Play(int state) {}
 
 	@Override
 	public void init(GameContainer gc, StateBasedGame sbg)
 			throws SlickException {
 		
-	    currentRoom = new Room("res/untitled.tmx", 0);
+		logic = new Logic();
 		
-	    InputStream iS = ResourceLoader.getResourceAsStream(currentRoom.getMap());
-	    map = new TiledMap(iS, "res");
-	    
-	    worldMap = new BlockMap(map);
-	    worldMap.generateMap(300, 300);
-	    grid = worldMap.getGrid();
+		currentRoom = Logic.currentRoom;
 		
-		test = new Actor("Toivo", grid, 
-				"res/Toivo SS Left.png", "res/Toivo SS Right.png", 
-				"res/Toivo SS Left.png", "res/Toivo SS Right.png", 
-				"res/Toivo SS Idle Left.png", "res/Toivo SS Idle Right.png", 
-				93, 100);	    
+		map = Logic.map;
+		worldMap = Logic.worldMap;
+		grid = worldMap.getGrid();
+		
+		test = Logic.currentPlayer;
+		
+//	    currentRoom = new Room("res/untitled.tmx", 0);
+//		
+//	    InputStream iS = ResourceLoader.getResourceAsStream(currentRoom.getMap());
+//	    map = new TiledMap(iS, "res");
+//	    
+//	    worldMap = new BlockMap(map);
+//	    worldMap.generateMap(300, 300);
+//	    grid = worldMap.getGrid();
+//		
+//		test = new Actor("Toivo", grid, 
+//				"res/Toivo SS Left.png", "res/Toivo SS Right.png", 
+//				"res/Toivo SS Left.png", "res/Toivo SS Right.png", 
+//				"res/Toivo SS Idle Left.png", "res/Toivo SS Idle Right.png", 
+//				93, 100);	    
 	}
 
 	@Override
@@ -73,6 +85,7 @@ public class Play extends BasicGameState{
 			throws SlickException {
 		Input input = gc.getInput();
 		
+		sbg.enterState(2);
 		//Controls
 	      //Moves Left - Left Key
 	      if(input.isKeyDown(Input.KEY_LEFT))

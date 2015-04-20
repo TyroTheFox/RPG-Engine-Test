@@ -68,6 +68,8 @@ public class Enemy {
 	    		lingerA = false, lingerB = false;
 	    
 	    Action aAction, bAction;
+	    
+	    boolean eAttack, eDefend, think = false, eWarning = false;
 	  
 	  public Enemy(String name, Cell[][] grid, String upImage, String downImage, String leftImage, String rightImage, String standLeft, String standRight, int tileWidth, int tileHeight)
 	  throws SlickException{

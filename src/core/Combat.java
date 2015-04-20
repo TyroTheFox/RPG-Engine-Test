@@ -41,345 +41,374 @@ public class Combat extends BasicGameState{
 		pAttackPlaceholder = new Rectangle(270, 220, 50, 50);
 		eAttackPlaceholder = new Rectangle(enemyPlaceholder.getCenterX() - 120, 220, 50, 50);
 		
-		energy = 500;
-		maxEnergy = 500;
 		
 		eEnergy = 500;
 		eMaxEnergy = 500;
 		
-		attack = false;
-		defend = false;
-		cast = false;
-		
-		eAttack = false;
-		eDefend = false;
-		
-		test = new Actor();
-		enemy = new Enemy();
+		test = Logic.currentPlayer;
+		enemy = Logic.currentEnemy;
+//		
+//		attack = false;
+//		defend = false;
+//		cast = false;
+//		
+//		eAttack = false;
+//		eDefend = false;
+//		
+//		test = new Actor();
+//		enemy = new Enemy();
 		
 //		eT = new EnergyTank(30, 125);
 		
-		enemy.addBrain(new Brain(){
-
-			@Override
-			public void stateCheck() {
-				enemy.constantTimer = 0;
-				think = false;
-//				if(!defend){
-					eAttack = true;
-//				}
-//				else{
-//					eAttack = false;
-			    	eWarning = false;
-//				}
-			}
-			
-		});
-		
-	  	  enemy.addAAction(new Action(){
-
-				@Override
-				public void actionEffect(Actor p, Enemy e, int delta) {
-//					if(eFired && aCounter < 1){						
-			         if(enemy.energy >= 0){
-			        	 enemy.energy -= 10;
-			        	 test.causeDamage(enemy.strength, test.actionB);
-						aCounter += 1;
-			         }
-//					eFired = false;
-					eAttack = false;
-			    	eWarning = false;
-//					think = false;
+//		testShotgun = new Weapon("Shotgun", 
+//	  			  new GunCylinder("Standard Gun Cylinder", 2, 2000, new Effect(){
+//
+//					@Override
+//					public void effect() {
 //					}
-					
-//			         if(!enemy.actionA){
-//			        	eFired = true;
+//	  				  
+//	  			  }, 
+//	  			  7), 
+//	  			  new Staff("Standard Crystal", 4, new Effect(){
+//
+//					@Override
+//					public void effect() {
+//					}
+//	  				  
+//	  			  }), 
+//	  			  new GunBarrel(5, 5, new Effect(){
+//
+//					@Override
+//					public void effect() {
+//					}
+//	  				  
+//	  			  }), 
+//	  			  new GunStock(1, 7, new Effect(){
+//
+//					@Override
+//					public void effect() {
+//					}
+//				}));
+//		
+//		test.addWeapon(testShotgun);
+//		
+//		enemy.addBrain(new Brain(){
+//
+//			@Override
+//			public void stateCheck() {
+//				enemy.constantTimer = 0;
+//				think = false;
+////				if(!defend){
+//					eAttack = true;
+////				}
+////				else{
+////					eAttack = false;
+//			    	eWarning = false;
+////				}
+//			}
+//			
+//		});
+//		
+//	  	  enemy.addAAction(new Action(){
+//
+//				@Override
+//				public void actionEffect(Actor p, Enemy e, int delta) {
+////					if(eFired && aCounter < 1){						
+//			         if(enemy.energy >= 0){
+//			        	 enemy.energy -= 10;
+//			        	 test.causeDamage(enemy.strength, test.actionB);
+//						aCounter += 1;
 //			         }
-//			         
-					enemy.actionA = true;
-					enemy.lingerA = true;
-				}
-
-				@Override
-				public void lingeringEffect(Actor p, Enemy e, int delta) {					
-			        			
-//					if(eFired && aCounter < 1){						
-//				         if(eEnergy >= 0){
-//				        	eEnergy -= 10;
-//							test.decreaseHP(3);
-//							aCounter += 1;
-//				         }
-//						eFired = false;
-//						eAttack = false;
-//						think = false;
-//					}
+////					eFired = false;
+//					eAttack = false;
+//			    	eWarning = false;
+////					think = false;
+////					}
 //					
-					if(enemy.timer > 350){
-						enemy.actionA = false;
-						enemy.lingerA = false;
-				        enemy.timer = 0;
-					}
-				}
-	  		  
-	  	  });
-	  	  
-	  	  testShotgun = new Weapon("Shotgun", 20, 3000, 2);
-	  	  
-	  	  test.addWeapon(testShotgun);
-		
-		test.addConstantEffect(new Action(){
-
-			@Override
-			public void actionEffect(Actor p, Enemy e, int delta) {
-				if(!test.lingerB || !test.spellA){
-					test.lingerConstant = true;	
-				}
-			}
-
-			@Override
-			public void lingeringEffect(Actor p, Enemy e, int delta) {
-				
-//				if(test.lingerConstant){
+////			         if(!enemy.actionA){
+////			        	eFired = true;
+////			         }
+////			         
+//					enemy.actionA = true;
+//					enemy.lingerA = true;
+//				}
+//
+//				@Override
+//				public void lingeringEffect(Actor p, Enemy e, int delta) {					
+//			        			
+////					if(eFired && aCounter < 1){						
+////				         if(eEnergy >= 0){
+////				        	eEnergy -= 10;
+////							test.decreaseHP(3);
+////							aCounter += 1;
+////				         }
+////						eFired = false;
+////						eAttack = false;
+////						think = false;
+////					}
+////					
+//					if(enemy.timer > 350){
+//						enemy.actionA = false;
+//						enemy.lingerA = false;
+//				        enemy.timer = 0;
+//					}
+//				}
+//	  		  
+//	  	  });
+//		
+//		test.addConstantEffect(new Action(){
+//
+//			@Override
+//			public void actionEffect(Actor p, Enemy e, int delta) {
+//				if(!test.lingerB || !test.spellA){
+//					test.lingerConstant = true;	
+//				}
+//			}
+//
+//			@Override
+//			public void lingeringEffect(Actor p, Enemy e, int delta) {
+//				
+////				if(test.lingerConstant){
+////					if(test.constantTimer > 140){
+////						if(test.energy < test.maxEnergy){
+////							test.energy += 7;
+////						}
+////						if(test.energy >= test.maxEnergy){
+////							test.energy = test.maxEnergy;
+////						}
+////			        	test.constantTimer = 0;
+////		        	}
+////				}
+////				
+////				if(test.energy > test.maxEnergy){
+////					test.lingerConstant = false;
+////					test.constantTimer = 0;
+////				}
+//				
+////				if(test.lingerConstant){
+////					if(test.constantTimer > 140){
+////						if(eT.energyLevel < eT.maxEnergyLevel){
+////							eT.energyLevel += 7;
+////						}
+////						if(eT.energyLevel >= eT.maxEnergyLevel){
+////							eT.energyLevel = eT.maxEnergyLevel;
+////						}
+////			        	test.constantTimer = 0;
+////		        	}
+////				}
+////				
+////				if(eT.energyLevel > eT.maxEnergyLevel){
+////					test.lingerConstant = false;
+////					test.constantTimer = 0;
+////				}
+//				
+//				
+//				if(test.lingerConstant && (!test.energyCutoff || !test.energyCutoff2)){
 //					if(test.constantTimer > 140){
-//						if(test.energy < test.maxEnergy){
-//							test.energy += 7;
-//						}
-//						if(test.energy >= test.maxEnergy){
-//							test.energy = test.maxEnergy;
-//						}
+//						test.addEnergy(7);
+//
 //			        	test.constantTimer = 0;
 //		        	}
 //				}
 //				
-//				if(test.energy > test.maxEnergy){
+//				if(test.fullTankCheck()){
 //					test.lingerConstant = false;
 //					test.constantTimer = 0;
 //				}
-				
-//				if(test.lingerConstant){
-//					if(test.constantTimer > 140){
-//						if(eT.energyLevel < eT.maxEnergyLevel){
-//							eT.energyLevel += 7;
-//						}
-//						if(eT.energyLevel >= eT.maxEnergyLevel){
-//							eT.energyLevel = eT.maxEnergyLevel;
-//						}
-//			        	test.constantTimer = 0;
-//		        	}
-//				}
+//			}
+//			
+//		});
+//		
+//		test.addSpell(new Action(){
+//
+//			@Override
+//			public void actionEffect(Actor p, Enemy e, int delta) {
 //				
-//				if(eT.energyLevel > eT.maxEnergyLevel){
-//					test.lingerConstant = false;
-//					test.constantTimer = 0;
-//				}
-				
-				
-				if(test.lingerConstant && (!test.energyCutoff || !test.energyCutoff2)){
-					if(test.constantTimer > 140){
-						test.addEnergy(7);
-
-			        	test.constantTimer = 0;
-		        	}
-				}
-				
-				if(test.fullTankCheck()){
-					test.lingerConstant = false;
-					test.constantTimer = 0;
-				}
-			}
-			
-		});
-		
-		test.addSpell(new Action(){
-
-			@Override
-			public void actionEffect(Actor p, Enemy e, int delta) {
-				
-//		         if(test.energy >= 0){
-//		        	 if(test.timer3 > 200){
-//		        		 if(spellDamage < 30){
-//		        			 spellDamage += 2;
-//		        		 }
-//		        		 if(spellDamage >= 30){
-//		        			 spellDamage = 60;
-//		        		 }
-//		        		 test.timer3 = 0;
-//		        	 }
-//		         }
-		         
-//		         if(eT.energyLevel >= 0){
-//		        	 if(test.timer3 > 200){
-//		        		 if(spellDamage < 30){
-//		        			 spellDamage += 2;
-//		        		 }
-//		        		 if(spellDamage >= 30){
-//		        			 spellDamage = 60;
-//		        		 }
-//		        		 test.timer3 = 0;
-//		        	 }
-//		         }
-		         
-		         if(!test.energyTankCheck() && !test.energyCutoff){
-		        	 if(test.timer3 > 200){
-		        		 if(spellDamage < 30){
-		        			 spellDamage += 2;
-		        		 }
-		        		 if(spellDamage >= 30){
-		        			 spellDamage = 60;
-		        		 }
-		        		 test.timer3 = 0;
-		        	 }
-		         }
-				test.spellA = true;
-				test.lSpellA = true;
-				
-			}
-
-			@Override
-			public void lingeringEffect(Actor p, Enemy e, int delta) {
-			
-//				if(!cast){
-//					enemy.causeDamage(spellDamage);
-//					spellDamage = 10;
-//					test.energy -= 10;
-//		        	test.timer3 = 0;
-//					test.spellA = false;
-//					test.lSpellA = false;
-//					fired = false;
-//				}
-				
-				if(test.energyReserves.get(test.currentTank).energyLevel >= 10){
-					test.energyCutoff = false;
-				}
-				
-				if(!cast && !test.energyTankCheck() && !test.energyCutoff){
-					if(test.spendEnergy(50)){
-						enemy.causeDamage(spellDamage);
-						spellDamage = 10;
-			        	test.timer3 = 0;
-						test.spellA = false;
-						test.lSpellA = false;
-						fired = false;
-					}
-					else{
-						 test.energyCutoff = true;
-					}
-				}
-			}
-		});
-		
-  	  test.addAAction(new Action(){
-
-			@Override
-			public void actionEffect(Actor p, Enemy e, int delta) {
-//		         if(!test.actionA){
-//		        	 fired = true;
-//		        	 test.timer = 0;
-//		         }
+////		         if(test.energy >= 0){
+////		        	 if(test.timer3 > 200){
+////		        		 if(spellDamage < 30){
+////		        			 spellDamage += 2;
+////		        		 }
+////		        		 if(spellDamage >= 30){
+////		        			 spellDamage = 60;
+////		        		 }
+////		        		 test.timer3 = 0;
+////		        	 }
+////		         }
 //		         
+////		         if(eT.energyLevel >= 0){
+////		        	 if(test.timer3 > 200){
+////		        		 if(spellDamage < 30){
+////		        			 spellDamage += 2;
+////		        		 }
+////		        		 if(spellDamage >= 30){
+////		        			 spellDamage = 60;
+////		        		 }
+////		        		 test.timer3 = 0;
+////		        	 }
+////		         }
+//		         
+//		         if(!test.energyTankCheck() && !test.energyCutoff){
+//		        	 if(test.timer3 > 200){
+//		        		 if(spellDamage < 30){
+//		        			 spellDamage += 2;
+//		        		 }
+//		        		 if(spellDamage >= 30){
+//		        			 spellDamage = 60;
+//		        		 }
+//		        		 test.timer3 = 0;
+//		        	 }
+//		         }
+//				test.spellA = true;
+//				test.lSpellA = true;
+//				
+//			}
+//
+//			@Override
+//			public void lingeringEffect(Actor p, Enemy e, int delta) {
+//			
+////				if(!cast){
+////					enemy.causeDamage(spellDamage);
+////					spellDamage = 10;
+////					test.energy -= 10;
+////		        	test.timer3 = 0;
+////					test.spellA = false;
+////					test.lSpellA = false;
+////					fired = false;
+////				}
+//				
+//				if(test.energyReserves.get(test.currentTank).energyLevel >= 10){
+//					test.energyCutoff = false;
+//				}
+//				
+//				if(!cast && !test.energyTankCheck() && !test.energyCutoff){
+//					if(test.spendEnergy(50)){
+//						enemy.causeDamage(spellDamage);
+//						spellDamage = 10;
+//			        	test.timer3 = 0;
+//						test.spellA = false;
+//						test.lSpellA = false;
+//						fired = false;
+//					}
+//					else{
+//						 test.energyCutoff = true;
+//					}
+//				}
+//			}
+//		});
+//		
+//  	  test.addAAction(new Action(){
+//
+//			@Override
+//			public void actionEffect(Actor p, Enemy e, int delta) {
+////		         if(!test.actionA){
+////		        	 fired = true;
+////		        	 test.timer = 0;
+////		         }
+////		         
+////				test.actionA = true;
+////				test.lingerA = true;
+//				if(!fired){
+//		         if(test.weapon.clip > 0){
+//		        	 enemy.causeDamage(test.getWeapon().attack);
+//		        	 enemy.constantTimer = 0;
+//					test.getWeapon().clip -= 1;
+//		         }
+//		         fired = true;
+//				
+//				attack = false;
+//				
 //				test.actionA = true;
 //				test.lingerA = true;
-				if(!fired){
-		         if(test.weapon.clip > 0){
-		        	 enemy.causeDamage(test.getWeapon().attack);
-		        	 enemy.constantTimer = 0;
-					test.getWeapon().clip -= 1;
-		         }
-		         fired = true;
-				
-				attack = false;
-				
-				test.actionA = true;
-				test.lingerA = true;
-				}
-			}
-
-			@Override
-			public void lingeringEffect(Actor p, Enemy e, int delta) {					
-//		        			
-//				if(fired){
-//					enemy.decreaseHP(10);
-//			         if(energy >= 0){
-//			        	 energy -= 10;
-//			         }
-//					fired = false;
 //				}
+//			}
+//
+//			@Override
+//			public void lingeringEffect(Actor p, Enemy e, int delta) {					
+////		        			
+////				if(fired){
+////					enemy.decreaseHP(10);
+////			         if(energy >= 0){
+////			        	 energy -= 10;
+////			         }
+////					fired = false;
+////				}
+////				
+////				if(test.timer > 40){
+////					test.actionA = false;
+////					test.lingerA = false;
+////				}
 //				
-//				if(test.timer > 40){
+//				if(test.timer > test.getWeapon().shotSpeed){
 //					test.actionA = false;
 //					test.lingerA = false;
+//					fired = false;
+//			        test.timer = 0;
 //				}
-				
-				if(test.timer > test.getWeapon().shotSpeed){
-					test.actionA = false;
-					test.lingerA = false;
-					fired = false;
-			        test.timer = 0;
-				}
-			}
-  		  
-  	  });
-  	  
-  	  test.addBAction(new Action(){
-
-			@Override
-			public void actionEffect(Actor p, Enemy e, int delta) {
-		         
-				if(!fired2){
-		        	fired2 = true;
-					test.timer2 = 0;
-					test.lingerB = true;
-		         }
-		         
-			}
-
-			@Override
-			public void lingeringEffect(Actor p, Enemy e, int delta) {
-				
-//					if(fired2 && !test.energyCutoff){
-//				         if(eT.energyLevel > 0){
-//				        	 if(test.timer2 > 70){
-//				        		 eT.energyLevel -= 10;
-//					        	 test.timer2 = 0;
-//				        	 }
+//			}
+//  		  
+//  	  });
+//  	  
+//  	  test.addBAction(new Action(){
+//
+//			@Override
+//			public void actionEffect(Actor p, Enemy e, int delta) {
+//		         
+//				if(!fired2){
+//		        	fired2 = true;
+//					test.timer2 = 0;
+//					test.lingerB = true;
+//		         }
+//		         
+//			}
+//
+//			@Override
+//			public void lingeringEffect(Actor p, Enemy e, int delta) {
+//				
+////					if(fired2 && !test.energyCutoff){
+////				         if(eT.energyLevel > 0){
+////				        	 if(test.timer2 > 70){
+////				        		 eT.energyLevel -= 10;
+////					        	 test.timer2 = 0;
+////				        	 }
+////				         }
+////					}
+////					
+////			         if(eT.energyLevel <= 0){
+////			        	 eT.energyLevel = 0;
+////			        	 test.actionB = false;
+////			        	 test.energyCutoff = true;
+////			         }
+//			         
+//						if(fired2 && !test.energyCutoff2){
+//					         if(!test.energyTankCheck()){
+//					        	 if(test.timer2 > 70){
+//					        		 if(test.spendEnergy(10)){
+//					        			 test.timer2 = 0;
+//					        			 test.actionB = true;
+//					        		 }
+//					        		 else{
+//					        			 test.energyCutoff2 = true;
+//					        		 }
+//					        	 }
+//					         }
+//						}
+//						
+//				         if(test.energyTankCheck()){
+//				        	 test.actionB = false;
+//				        	 test.energyCutoff2 = true;
 //				         }
-//					}
-//					
-//			         if(eT.energyLevel <= 0){
-//			        	 eT.energyLevel = 0;
-//			        	 test.actionB = false;
-//			        	 test.energyCutoff = true;
-//			         }
-			         
-						if(fired2 && !test.energyCutoff2){
-					         if(!test.energyTankCheck()){
-					        	 if(test.timer2 > 70){
-					        		 if(test.spendEnergy(10)){
-					        			 test.timer2 = 0;
-					        			 test.actionB = true;
-					        		 }
-					        		 else{
-					        			 test.energyCutoff2 = true;
-					        		 }
-					        	 }
-					         }
-						}
-						
-				         if(test.energyTankCheck()){
-				        	 test.actionB = false;
-				        	 test.energyCutoff2 = true;
-				         }
-				
-				if(!defend){
-					test.actionB = false; 
-					test.lingerB = false;
-					fired2 = false;
-					test.timer2 = 0;
-					test.energyCutoff2 = false;
-				}
-			}
-  		  
-  	  });
+//				
+//				if(!defend){
+//					test.actionB = false; 
+//					test.lingerB = false;
+//					fired2 = false;
+//					test.timer2 = 0;
+//					test.energyCutoff2 = false;
+//				}
+//			}
+//  		  
+//  	  });
 		
 	}
 
@@ -435,39 +464,39 @@ public class Combat extends BasicGameState{
 	      //Moves Left - Left Key
 	      if(input.isKeyDown(Input.KEY_Z))
 	      {
-	         cast = true;
+	         test.cast = true;
 	      }
 	      else{
-	    	 cast = false;
+	    	 test.cast = false;
 	      }
 	      if(input.isKeyPressed(Input.KEY_X))
 	      {
-	         attack = true;
+	         test.attack = true;
 	      }
 	      else{
-	    	  attack = false;
+	    	  test.attack = false;
 	      }
 	      //Moves Right - Right Key
 	      if(input.isKeyDown(Input.KEY_C))
 	      {
-	         defend = true;
+	         test.defend = true;
 	      }
 	      else{
-	    	  defend = false;
+	    	  test.defend = false;
 	      }	      
 	      
 	      //Toggles each movement based on button presses
 	      //Left
-	      if(attack)
+	      if(test.attack)
 	      {
 	    	  test.doAAction(test, enemy, delta);
 	      }
 	      //Right
-	      if(defend)
+	      if(test.defend)
 	      {
 	    	  test.doBAction(test, enemy, delta);
 	      }
-	      if(cast){
+	      if(test.cast){
 	    	  test.doSpell(test, enemy, delta);
 	      }
 	      
@@ -481,16 +510,16 @@ public class Combat extends BasicGameState{
 	    	  eWarning = true;
 	      }
 	      
-	      if(think){
+	      if(enemy.think){
 	    	  enemy.doBrain();
 	      }
 	      
-	      if(eAttack)
+	      if(enemy.eAttack)
 	      {
 	    	  enemy.doAAction(test, enemy, delta);
 	      }
 	      //Right
-	      if(eDefend)
+	      if(enemy.eDefend)
 	      {
 	    	  enemy.doBAction(test, enemy, delta);
 	      }

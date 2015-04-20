@@ -49,7 +49,7 @@ public class Actor {
 	  int strength = 50;
 	  int special = 80;
 	  int maxEnergy = 300;
-	  int maxTank = 6;
+	  int maxTank = 2;
 	  public ArrayList<EnergyTank> energyReserves;
 	  public EnergyTank temp;
 	  int currentTank;
@@ -66,10 +66,20 @@ public class Actor {
 	  float x;
 	  float y;
 	  
+	  boolean attack = false;
+	  boolean defend = false;
+	  boolean cast = false;
+	  
 	  boolean energyCutoff = false;
 	  boolean energyCutoff2 = false;
 	  
+	  int spellDamage;
+	  
+	  boolean fired, fired2;
+	  
 	  Weapon weapon;
+	  
+	  Inventory inventory;
 	  
 	    //Character Flags
 	    boolean actionA = false, actionB = false, 
@@ -79,7 +89,11 @@ public class Actor {
 	    
 	    Action aAction, bAction, spell, constantEffect;
 	  
-	  public Actor(String name, Cell[][] grid, String upImage, String downImage, String leftImage, String rightImage, String standLeft, String standRight, int tileWidth, int tileHeight)
+	  public Actor(String name, 
+			  Cell[][] grid, 
+			  String upImage, String downImage, String leftImage, String rightImage, 
+			  String standLeft, String standRight, 
+			  int tileWidth, int tileHeight)
 	  throws SlickException{
 		  
 		  this.grid = grid;
@@ -143,20 +157,22 @@ public class Actor {
 		  leftSensor = new Rectangle(x - 2, y + 5, 2, 22);
 		  rightSensor = new Rectangle(x + 32, y + 5, 2, 22);
 		  
+		  inventory = new Inventory();
+		  
 	  }
 	  
-	  public Actor(){		  
+	  public Actor(){}
+	  
+	  public void initWeapon(Weapon w){
+		  maxTank = w.staff.maxTankSize;
 		  
 		  energyReserves = new ArrayList<EnergyTank>();
-	  
-	  for(int e = 0; e < maxTank; e++){
-		  energyReserves.add(new EnergyTank(30, 125 + (50 * e)));
-	  }
-	  
-	  System.out.println("Array Size on Creation: " + energyReserves.size());
-	  System.out.println("Array Empty?: " + energyReserves.isEmpty());
-	  System.out.println("Array: " + energyReserves.toString());
-	  currentTank = energyReserves.size() - 1;
+		  
+		  for(int e = 0; e < maxTank; e++){
+			  energyReserves.add(new EnergyTank(30, 125 + (50 * e)));
+		  }
+		  
+		  currentTank = energyReserves.size() - 1;
 	  }
 	  
 	  public void setPosition(float x, float y){
@@ -300,6 +316,7 @@ public class Actor {
 	    
 	    public void addWeapon(Weapon w){
 	    	weapon = w;
+	    	initWeapon(w);
 	    }
 	    
 	    public Weapon getWeapon(){
